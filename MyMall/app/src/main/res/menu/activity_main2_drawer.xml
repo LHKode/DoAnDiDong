@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_my_mall"
+            android:icon="@mipmap/my_mall"
+            android:title="My Mall" />
+        <item
+            android:id="@+id/nav_my_orders"
+            android:icon="@mipmap/my_orders"
+            android:title="Đơn hàng của tôi" />
+        <item
+            android:id="@+id/nav_my_rewards"
+            android:icon="@mipmap/my_rewards"
+            android:title="Điểm thưởng"
+            android:visible="false"/>
+        <item
+            android:id="@+id/nav_my_cart"
+            android:icon="@mipmap/cart_black"
+            android:title="Giỏ hàng" />
+        <item
+            android:id="@+id/nav_my_wishlist"
+            android:icon="@mipmap/my_wishlist"
+            android:title="Danh sách yêu thích"
+            android:visible="false" />
+        <item
+            android:id="@+id/nav_my_account"
+            android:icon="@mipmap/my_account"
+            android:title="Tài khoản của tôi" />
+    </group>
+    <item
+        android:id="@+id/nav_sign_out"
+        android:icon="@mipmap/sign_out"
+        android:title="Đăng xuất" />
+</menu>
