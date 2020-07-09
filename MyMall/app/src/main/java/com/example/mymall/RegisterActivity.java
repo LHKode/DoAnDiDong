@@ -1,12 +1,12 @@
 package com.example.mymall;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -32,6 +32,9 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode== KeyEvent.KEYCODE_BACK){
+            SignUpFragment.disableCloseBtn = false;
+            SignInFragment.disableCloseBtn = false;
+
             if(onResetPasswordFragment){
                 onResetPasswordFragment =false;
                 setFragment(new SignInFragment());

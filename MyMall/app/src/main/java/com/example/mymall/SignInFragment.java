@@ -3,12 +3,6 @@ package com.example.mymall;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -22,6 +16,11 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -56,6 +55,8 @@ public class SignInFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
     private  String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+.[a-z]+";
 
+    public static boolean disableCloseBtn = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,6 +77,12 @@ public class SignInFragment extends Fragment {
         signInBtn=view.findViewById(R.id.cancel_btn);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        if (disableCloseBtn){
+            closeBtn.setVisibility(View.GONE);
+        }
+        else {
+            closeBtn.setVisibility(View.VISIBLE);
+        }
 
         return view;
     }
@@ -206,8 +213,13 @@ public class SignInFragment extends Fragment {
         }
     }
     private  void main2Intent(){
-        Intent main2Intent = new Intent(getActivity(),Main2Activity.class);
-        startActivity(main2Intent);
+        if(disableCloseBtn){
+            disableCloseBtn = false;
+        }
+        else {
+            Intent main2Intent = new Intent(getActivity(), Main2Activity.class);
+            startActivity(main2Intent);
+        }
         getActivity().finish();
     }
 }

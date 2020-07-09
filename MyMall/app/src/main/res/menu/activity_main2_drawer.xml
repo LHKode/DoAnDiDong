@@ -24,8 +24,7 @@
         <item
             android:id="@+id/nav_my_wishlist"
             android:icon="@mipmap/my_wishlist"
-            android:title="Danh sách yêu thích"
-            android:visible="false" />
+            android:title="Danh sách yêu thích" />
         <item
             android:id="@+id/nav_my_account"
             android:icon="@mipmap/my_account"

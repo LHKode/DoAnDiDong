@@ -4,12 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -24,11 +18,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -61,6 +59,7 @@ public class SignUpFragment extends Fragment {
     private FirebaseFirestore firebaseFirestore;
     private  String emailPattern= "[a-zA-Z0-9._-]+@[a-z]+.[a-z]+";
 
+    public static boolean disableCloseBtn = false;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -85,6 +84,13 @@ public class SignUpFragment extends Fragment {
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
+
+        if (disableCloseBtn){
+            closeBtn.setVisibility(View.GONE);
+        }
+        else {
+            closeBtn.setVisibility(View.VISIBLE);
+        }
         return view;
     }
 
@@ -230,21 +236,35 @@ public class SignUpFragment extends Fragment {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
 
-                                    Map<Object,String > userdata = new HashMap<>();
+                                    Map<String,Object > userdata = new HashMap<>();
                                     userdata.put("fullname",fullName.getText().toString());
 
-                                    firebaseFirestore.collection("USERS")
-                                            .add(userdata)
-                                            .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                    firebaseFirestore.collection("USERS").document(firebaseAuth.getUid())
+                                            .set(userdata)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
-                                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                                public void onComplete(@NonNull Task<Void> task) {
                                                     if(task.isSuccessful()){
-                                                        main2Intent();
+                                                        Map<String,Object> listSize = new HashMap<>();
+                                                        listSize.put("list_size",(long)0);
+                                                        firebaseFirestore.collection("USERS").document(firebaseAuth.getUid()).collection("USER_DATA").document("MY_WISHLIST")
+                                                                .set(listSize).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if(task.isSuccessful()){
+                                                                    main2Intent();
+                                                                }
+                                                                else {
+                                                                    progressBar.setVisibility(View.INVISIBLE);
+                                                                    signUpBtn.setEnabled(true);
+                                                                    signUpBtn.setTextColor(Color.rgb(255,255,255));
+                                                                    String error = task.getException().getMessage();
+                                                                    Toast.makeText(getActivity(),error, Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }
+                                                        });
                                                     }
                                                     else{
-                                                        progressBar.setVisibility(View.INVISIBLE);
-                                                        signUpBtn.setEnabled(true);
-                                                        signUpBtn.setTextColor(Color.rgb(255,255,255));
                                                         String error = task.getException().getMessage();
                                                         Toast.makeText(getActivity(),error, Toast.LENGTH_SHORT).show();
                                                     }
@@ -270,8 +290,13 @@ public class SignUpFragment extends Fragment {
         }
     }
     private void main2Intent(){
-        Intent main2Intent = new Intent(getActivity(),Main2Activity.class);
-        startActivity(main2Intent);
+        if(disableCloseBtn){
+            disableCloseBtn = false;
+        }
+        else {
+            Intent main2Intent = new Intent(getActivity(), Main2Activity.class);
+            startActivity(main2Intent);
+        }
         getActivity().finish();
     }
 }

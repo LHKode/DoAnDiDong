@@ -36,11 +36,9 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
         String title =horizontalProductScrollModelList.get(position).getProductTitle();
         String price = horizontalProductScrollModelList.get(position).getProductPrice();
         String description = horizontalProductScrollModelList.get(position).getProductDescription();
+        String productId = horizontalProductScrollModelList.get(position).getProductID();
 
-        viewHolder.setProductImage(resource);
-        viewHolder.setProductPrice(price);
-        viewHolder.setProductDescription(description);
-        viewHolder.setProductTitle(title);
+        viewHolder.setData(productId,resource,title,description,price);
     }
 
     @Override
@@ -59,6 +57,7 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
         private TextView productTitle;
         private TextView productDescription;
         private TextView productPrice;
+
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.h_s_product_image);
@@ -66,27 +65,26 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
             productPrice = itemView.findViewById(R.id.h_s_product_price);
             productTitle = itemView.findViewById(R.id.h_s_product_title);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                Intent productDetailsIntent = new Intent(itemView.getContext(),ProductDetailsActivity.class);
-                itemView.getContext().startActivity(productDetailsIntent);
-                }
-            });
+
         }
 
-        private void setProductImage(String resource){
+        private void setData(final String productId,String resource, String title,String description,String price){
             Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.home_icon)).into(productImage);
-        }
-        private void setProductTitle(String title){
             productTitle.setText(title);
-        }
-        private void setProductDescription(String description){
             productDescription.setText(description);
-        }
-        private void setProductPrice(String price){
             productPrice.setText(price+" VND");
-        }
 
+            if (!title.equals("")){
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent productDetailsIntent = new Intent(itemView.getContext(),ProductDetailsActivity.class);
+                        productDetailsIntent.putExtra("PRODUCT_ID",productId);
+                        itemView.getContext().startActivity(productDetailsIntent);
+                    }
+                });
+            }
+
+        }
     }
 }

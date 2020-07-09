@@ -1,5 +1,6 @@
 package com.example.mymall;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -12,8 +13,6 @@ import android.widget.ImageView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -40,6 +39,7 @@ public class HomeFragment extends Fragment {
     private HomePageAdapter adapter;
     private ImageView noInternetConnection;
 
+    @SuppressLint("WrongConstant")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,9 +49,11 @@ public class HomeFragment extends Fragment {
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if(networkInfo !=null && networkInfo.isConnected()== true) {
-            noInternetConnection.setVisibility(View.GONE);
-
+       // if(networkInfo !=null && networkInfo.isConnected()== true) {
+//            noInternetConnection.setVisibility(View.GONE);
+//           // categoryRecyclerView.setVisibility(View.VISIBLE);
+//            homePageRecyclerView.setVisibility(View.VISIBLE);
+            Main2Activity.drawer.setDrawerLockMode(0);
             categoryRecyclerView= view.findViewById(R.id.category_recycler_view);
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
             layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -82,12 +84,14 @@ public class HomeFragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
             homePageRecyclerView.setAdapter(adapter);
-        }
-        else{
-            Glide.with(this).load(R.drawable.bin).into(noInternetConnection);
-            noInternetConnection.setVisibility(View.VISIBLE);
-        }
-
+        //}
+//        else{
+//            categoryRecyclerView.setVisibility(View.GONE);
+//            homePageRecyclerView.setVisibility(View.GONE);
+//            Glide.with(this).load(R.drawable.bin).into(noInternetConnection);
+//            noInternetConnection.setVisibility(View.VISIBLE);
+//            Main2Activity.drawer.setDrawerLockMode(1);
+//        }
 
         return view;
     }

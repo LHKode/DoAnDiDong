@@ -23,6 +23,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import static com.example.mymall.RegisterActivity.setSignUpFragment;
 
@@ -43,6 +45,11 @@ public class Main2Activity extends AppCompatActivity
 
     private Window window;
     private Toolbar toolbar;
+    private Dialog signInDialog;
+    private FirebaseUser currentUser;
+
+    public static DrawerLayout drawer;
+
     @SuppressLint("WrongConstant")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +61,7 @@ public class Main2Activity extends AppCompatActivity
         window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -76,7 +82,50 @@ public class Main2Activity extends AppCompatActivity
             setFragment(new HomeFragment(), HOME_FRAGMENT);
         }
 
+        signInDialog = new Dialog(Main2Activity.this);
+        signInDialog.setContentView(R.layout.sign_in_dialog);
+        signInDialog.setCancelable(true);
+        signInDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        Button dialogSignInBtn = signInDialog.findViewById(R.id.cancel_btn);
+        Button dialogSignUpBtn = signInDialog.findViewById(R.id.ok_btn);
+        final Intent registerIntent = new Intent(Main2Activity.this,RegisterActivity.class);
+
+        dialogSignInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SignInFragment.disableCloseBtn = true;
+                SignUpFragment.disableCloseBtn = true;
+                signInDialog.dismiss();
+                setSignUpFragment = false;
+                startActivity(registerIntent);
+            }
+        });
+        dialogSignUpBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SignUpFragment.disableCloseBtn = true;
+                SignInFragment.disableCloseBtn = true;
+                signInDialog.dismiss();
+                setSignUpFragment = true;
+                startActivity(registerIntent);
+            }
+        });
+
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser == null){
+            navigationView.getMenu().getItem(navigationView.getMenu().size()-1).setEnabled(false);
+        }
+        else {
+            navigationView.getMenu().getItem(navigationView.getMenu().size()-1).setEnabled(true);
+        }
+    }
+
     @Override
     public void onBackPressed(){
         DrawerLayout drawer =(DrawerLayout) findViewById(R.id.drawer_layout);
@@ -123,36 +172,12 @@ public class Main2Activity extends AppCompatActivity
              return true;
          }
          else if(id==R.id.main_cart_icon){
-
-             final Dialog signInDialog = new Dialog(Main2Activity.this);
-             signInDialog.setContentView(R.layout.sign_in_dialog);
-             signInDialog.setCancelable(true);
-             signInDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-
-             Button dialogSignInBtn = signInDialog.findViewById(R.id.cancel_btn);
-             Button dialogSignUpBtn = signInDialog.findViewById(R.id.ok_btn);
-             final Intent registerIntent = new Intent(Main2Activity.this,RegisterActivity.class);
-
-             dialogSignInBtn.setOnClickListener(new View.OnClickListener() {
-                 @Override
-                 public void onClick(View v) {
-                     signInDialog.dismiss();
-                     setSignUpFragment = false;
-                     startActivity(registerIntent);
-                 }
-             });
-             signInDialog.show();
-
-             dialogSignUpBtn.setOnClickListener(new View.OnClickListener() {
-                 @Override
-                 public void onClick(View v) {
-                     signInDialog.dismiss();
-                     setSignUpFragment = true;
-                     startActivity(registerIntent);
-                 }
-             });
-
-             //gotoFragment("Giỏ hàng",new MyCartFragment(),CART_FRAGMENT);
+             if(currentUser==null) {
+                 signInDialog.show();
+             }
+             else {
+                 gotoFragment("Giỏ hàng",new MyCartFragment(),CART_FRAGMENT);
+             }
              return true;
          }
          else if (id == android.R.id.home){
@@ -180,33 +205,37 @@ public class Main2Activity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public  boolean onNavigationItemSelected(MenuItem item){
-        int id= item.getItemId();
-        if(id==R.id.nav_my_mall){
-            actionBarLogo.setVisibility(View.VISIBLE);
-            invalidateOptionsMenu();
-            setFragment(new HomeFragment(),HOME_FRAGMENT);
-        }
-        else if(id==R.id.nav_my_orders){
-            gotoFragment("Danh sách hơn hàng",new MyOrdersFragment(),ORDERS_FRAGMENT);
-        }
-        else if(id==R.id.nav_my_rewards){
-
-        }
-        else if(id==R.id.nav_my_cart){
-            gotoFragment("Giỏ hàng",new MyCartFragment(),CART_FRAGMENT);
-        }
-        else if(id==R.id.nav_my_wishlist){
-
-        }
-        else if(id==R.id.nav_my_account){
-            gotoFragment("Tài khoản",new MyAccountFragment(),ACCOUNT_FRAGMENT);
-        }
-        else if(id==R.id.nav_sign_out){
-
-        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+        if(currentUser != null) {
+            int id = item.getItemId();
+            if (id == R.id.nav_my_mall) {
+                actionBarLogo.setVisibility(View.VISIBLE);
+                invalidateOptionsMenu();
+                setFragment(new HomeFragment(), HOME_FRAGMENT);
+            } else if (id == R.id.nav_my_orders) {
+                gotoFragment("Danh sách hơn hàng", new MyOrdersFragment(), ORDERS_FRAGMENT);
+            } else if (id == R.id.nav_my_rewards) {
+
+            } else if (id == R.id.nav_my_cart) {
+                gotoFragment("Giỏ hàng", new MyCartFragment(), CART_FRAGMENT);
+            } else if (id == R.id.nav_my_wishlist) {
+
+            } else if (id == R.id.nav_my_account) {
+                gotoFragment("Tài khoản", new MyAccountFragment(), ACCOUNT_FRAGMENT);
+            } else if (id == R.id.nav_sign_out) {
+                FirebaseAuth.getInstance().signOut();
+                Intent registerIntent = new Intent(Main2Activity.this,RegisterActivity.class);
+                startActivity(registerIntent);
+                finish();
+            }
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        }
+        else {
+            drawer.closeDrawer(GravityCompat.START);
+            signInDialog.show();
+            return false;
+        }
     }
 
     private  void  setFragment(Fragment fragment,int fragmentNo){
