@@ -1,15 +1,15 @@
 package com.example.mymall;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,10 +39,7 @@ public class DeliveryActivity extends AppCompatActivity {
         deliveryRecyclerView.setLayoutManager(layoutManager);
 
         List<CartItemModel> cartItemModelList = new ArrayList<>();
-        cartItemModelList.add(new CartItemModel(0,R.drawable.a_phone_pro,"LHK phone",3,"59999 VND","100 VND",1,0,0));
-        cartItemModelList.add(new CartItemModel(0,R.drawable.a_phone_pro,"LHK phone",0,"59999 VND","100 VND",1,1,0));
-        cartItemModelList.add(new CartItemModel(0,R.drawable.a_phone_pro,"LHK phone",3,"59999 VND","100 VND",1,2,0));
-        cartItemModelList.add(new CartItemModel(1,"Tạm tính (3 hàng)","40 VND","Miễn phí","40 VND","1 VND"));
+         cartItemModelList.add(new CartItemModel(1,"Tạm tính (3 hàng)","40 VND","Miễn phí","40 VND","1 VND"));
 
         CartAdapter cartAdapter = new CartAdapter(cartItemModelList);
         deliveryRecyclerView.setAdapter(cartAdapter);

@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -124,6 +125,7 @@ public class Main2Activity extends AppCompatActivity
         else {
             navigationView.getMenu().getItem(navigationView.getMenu().size()-1).setEnabled(true);
         }
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -157,6 +159,32 @@ public class Main2Activity extends AppCompatActivity
         if(currentFragment == HOME_FRAGMENT) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getMenuInflater().inflate(R.menu.main2, menu);
+
+            MenuItem cartItem = menu.findItem(R.id.main_cart_icon);
+            if(DBqueries.cartList.size() >0){
+                cartItem.setActionView(R.layout.badge_layout);
+                ImageView badgeIcon = cartItem.getActionView().findViewById(R.id.bagde_icon);
+                badgeIcon.setImageResource(R.mipmap.cart_white);
+                TextView badgeCount = cartItem.getActionView().findViewById(R.id.bagde_count);
+                if(DBqueries.cartList.size()<99) {
+                    badgeCount.setText(String.valueOf(DBqueries.cartList.size()));
+                }else {
+                    badgeCount.setText("99");
+                }
+                cartItem.getActionView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(currentUser == null){
+                            signInDialog.show();
+                        }
+                        else {
+                            gotoFragment("Giỏ Hàng",new MyCartFragment(), CART_FRAGMENT);
+                        }
+                    }
+                });
+            }else {
+                cartItem.setActionView(null);
+            }
         }
         return true;
     }
