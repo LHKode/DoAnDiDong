@@ -238,6 +238,9 @@ public class SignUpFragment extends Fragment {
 
                                     Map<String,Object > userdata = new HashMap<>();
                                     userdata.put("fullname",fullName.getText().toString());
+                                    userdata.put("email",email.getText().toString());
+                                    userdata.put("profile","");
+
 
                                     firebaseFirestore.collection("USERS").document(firebaseAuth.getUid())
                                             .set(userdata)
@@ -247,8 +250,16 @@ public class SignUpFragment extends Fragment {
                                                     if(task.isSuccessful()){
                                                         Map<String,Object> listSize = new HashMap<>();
                                                         listSize.put("list_size",(long)0);
+
                                                         Map<String,Object> cartMap = new HashMap<>();
                                                         cartMap.put("list_size",(long)0);
+
+                                                        Map<String,Object> myAddressesMap = new HashMap<>();
+                                                        myAddressesMap.put("list_size",(long)0);
+
+                                                        Map<String,Object> myOrdersMap = new HashMap<>();
+                                                        myAddressesMap.put("list_size",(long)0);
+
                                                         firebaseFirestore.collection("USERS").document(firebaseAuth.getUid()).collection("USER_DATA").document("MY_WISHLIST")
                                                                 .set(listSize).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
@@ -266,6 +277,38 @@ public class SignUpFragment extends Fragment {
                                                             }
                                                         });
                                                         firebaseFirestore.collection("USERS").document(firebaseAuth.getUid()).collection("USER_DATA").document("MY_CART")
+                                                                .set(listSize).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if(task.isSuccessful()){
+                                                                    main2Intent();
+                                                                }
+                                                                else {
+                                                                    progressBar.setVisibility(View.INVISIBLE);
+                                                                    signUpBtn.setEnabled(true);
+                                                                    signUpBtn.setTextColor(Color.rgb(255,255,255));
+                                                                    String error = task.getException().getMessage();
+                                                                    Toast.makeText(getActivity(),error, Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }
+                                                        });
+                                                        firebaseFirestore.collection("USERS").document(firebaseAuth.getUid()).collection("USER_DATA").document("MY_ADDRESSES")
+                                                                .set(listSize).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if(task.isSuccessful()){
+                                                                    main2Intent();
+                                                                }
+                                                                else {
+                                                                    progressBar.setVisibility(View.INVISIBLE);
+                                                                    signUpBtn.setEnabled(true);
+                                                                    signUpBtn.setTextColor(Color.rgb(255,255,255));
+                                                                    String error = task.getException().getMessage();
+                                                                    Toast.makeText(getActivity(),error, Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }
+                                                        });
+                                                        firebaseFirestore.collection("USERS").document(firebaseAuth.getUid()).collection("USER_DATA").document("MY_ORDERS")
                                                                 .set(listSize).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
